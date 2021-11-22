@@ -43,10 +43,15 @@ function App() {
   }, [input]);
 
   useEffect(() => {
-    if (input) {
-      getUsers();
-    }
-  }, [getUsers, input]);
+    let timer = setTimeout(() => {
+      if (input) {
+        getUsers();
+      }
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [getUsers, input]); //Debounce on input change
 
   useEffect(() => {
     if (selected === false) {
