@@ -3,9 +3,9 @@ import {
   useState,
   useEffect,
   useCallback,
-  memo,
   useRef,
   forwardRef,
+  Component,
 } from "react";
 import "./App.css";
 
@@ -91,30 +91,32 @@ function App() {
 
   return (
     <div className="App">
-      <div className="container">
-        <SearchIcon />
-        <input
-          type="search"
-          value={input}
-          ref={inputRef}
-          placeholder="Search users by ID, address, name..."
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <CrossIcon onClick={() => setInput("")} />
-        {input.trim() && people.length === 0 && (
-          <div className="no-result">No results found </div>
-        )}
-        <People
-          people={people}
-          id={id}
-          input={input}
-          ref={ref}
-          cursor={cursor}
-          setCursor={setCursor}
-          setSelected={setSelected}
-        />
-      </div>
+      <ErrorBoundary>
+        <div className="container">
+          <SearchIcon />
+          <input
+            type="search"
+            value={input}
+            ref={inputRef}
+            placeholder="Search users by ID, address, name..."
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <CrossIcon onClick={() => setInput("")} />
+          {input.trim() && people.length === 0 && (
+            <div className="no-result">No results found </div>
+          )}
+          <People
+            people={people}
+            id={id}
+            input={input}
+            ref={ref}
+            cursor={cursor}
+            setCursor={setCursor}
+            setSelected={setSelected}
+          />
+        </div>
+      </ErrorBoundary>
     </div>
   );
 }
@@ -224,3 +226,32 @@ const CrossIcon = (props) => {
     </svg>
   );
 };
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null, errorInfo: null };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Catch errors in any components below and re-render with error message
+    this.setState({
+      error: error,
+      errorInfo: errorInfo,
+    });
+  }
+
+  render() {
+    if (this.state.errorInfo) {
+      return (
+        <div>
+          <h2>Something went wrong.</h2>
+          <details style={{ whiteSpace: "pre-wrap" }} role="alert">
+            {this.state.error && this.state.error.toString()}
+          </details>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
