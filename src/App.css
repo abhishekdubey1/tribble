@@ -10,3 +10,10 @@
 .item-highlight::before::content {
   color: blue;
 }
+.icon-mag {
+  color: gray;
+  cursor: pointer;
+}
+.icon-cancel {
+  cursor: pointer;
+}
