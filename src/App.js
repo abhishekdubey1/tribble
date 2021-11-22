@@ -93,7 +93,7 @@ const People = ({ people, id, input }) => {
                   className="highlight italic"
                 />
               </div>
-              <div className="item-highlight">{`${id} was found in items`}</div>
+              <div className="item-highlight">{`"${id}" was found in items`}</div>
               <div>
                 <Highlighter
                   sentence={person.address}

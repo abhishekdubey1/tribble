@@ -1,3 +1,12 @@
 .highlight {
   background: skyblue;
 }
+.italic {
+  font-style: italic;
+}
+.item-highlight::before {
+  content: "▪ ";
+}
+.item-highlight::before::content {
+  color: blue;
+}
