@@ -31,19 +31,20 @@ function App() {
   }, [getUsers, input]);
   return (
     <div className="App">
-      <SearchIcon />
-      <input
-        type="search"
-        value={input}
-        placeholder="Search users by ID, address, name..."
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <CrossIcon onClick={() => setInput("")} />
-      {input.trim() && people.length === 0 && (
-        <div className="no-result">No results found </div>
-      )}
-
-      <People people={people} id={id} input={input} />
+      <div className="container">
+        <SearchIcon />
+        <input
+          type="search"
+          value={input}
+          placeholder="Search users by ID, address, name..."
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <CrossIcon onClick={() => setInput("")} />
+        {input.trim() && people.length === 0 && (
+          <div className="no-result">No results found </div>
+        )}
+        <People people={people} id={id} input={input} />
+      </div>
     </div>
   );
 }
