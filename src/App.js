@@ -15,8 +15,11 @@ function App() {
   const [input, setInput] = useState("");
   const [people, setPeople] = useState([]);
   const [id, setId] = useState("");
-  const [cursor, setCursor] = useState(0);
+  const [cursor, setCursor] = useState(-1);
+  const [selected, setSelected] = useState(false);
+
   const ref = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (ref.current) {
@@ -45,8 +48,17 @@ function App() {
     }
   }, [getUsers, input]);
 
+  useEffect(() => {
+    if (selected === false) {
+      inputRef.current.focus();
+    }
+  }, [selected]);
+
   const handleKeyDown = useCallback(
-    async (e) => {
+    (e) => {
+      if (e.key === "Enter") {
+        return setSelected(true);
+      }
       // arrow up/down button should select next/previous list element
       if (e.keyCode === 38 && cursor > 0) {
         setCursor((c) => c - 1);
@@ -57,6 +69,21 @@ function App() {
     [cursor, people.length]
   );
 
+  if (selected && people[cursor]?.id) {
+    return (
+      <div className="container card">
+        <CrossIcon onClick={() => setSelected(false)} />
+        <h1>Name: {people[cursor]?.name}</h1>
+        <p>Address: {people[cursor]?.address}</p>
+        <ol className="items">
+          {people[cursor]?.items.map((item, idx) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <div className="container">
@@ -64,6 +91,7 @@ function App() {
         <input
           type="search"
           value={input}
+          ref={inputRef}
           placeholder="Search users by ID, address, name..."
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -79,6 +107,7 @@ function App() {
           ref={ref}
           cursor={cursor}
           setCursor={setCursor}
+          setSelected={setSelected}
         />
       </div>
     </div>
@@ -115,47 +144,50 @@ const Highlighter = ({
   return sentence || "";
 };
 
-const People = forwardRef(({ people, id, input, cursor, setCursor }, ref) => {
-  return (
-    people.length !== 0 && (
-      <ul tabIndex="-1" ref={ref}>
-        {people.map((person, i) => {
-          return (
-            <li
-              key={person.id}
-              className={cursor === i ? "active" : null}
-              onMouseEnter={() => setCursor(i)}
-            >
-              <div>
-                <Highlighter
-                  sentence={person.id}
-                  condition={person.keys?.includes("id")}
-                  highlight={id || input}
-                />
-              </div>
-              <div className="italic">
-                <Highlighter
-                  sentence={person.name}
-                  condition={person.keys?.includes("name")}
-                  highlight={id || input}
-                  className="highlight italic"
-                />
-              </div>
-              <div className="item-highlight">{`"${id}" was found in items`}</div>
-              <div>
-                <Highlighter
-                  sentence={person.address}
-                  condition={person.keys?.includes("address")}
-                  highlight={id || input}
-                />
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    )
-  );
-});
+const People = forwardRef(
+  ({ people, id, input, cursor, setCursor, setSelected }, ref) => {
+    return (
+      people.length !== 0 && (
+        <ul tabIndex="0" ref={ref}>
+          {people.map((person, i) => {
+            return (
+              <li
+                key={person.id}
+                className={cursor === i ? "active" : null}
+                onMouseEnter={() => setCursor(i)}
+                onClick={() => setSelected(true)}
+              >
+                <div>
+                  <Highlighter
+                    sentence={person.id}
+                    condition={person.keys?.includes("id")}
+                    highlight={id || input}
+                  />
+                </div>
+                <div className="italic">
+                  <Highlighter
+                    sentence={person.name}
+                    condition={person.keys?.includes("name")}
+                    highlight={id || input}
+                    className="highlight italic"
+                  />
+                </div>
+                <div className="item-highlight">{`"${id}" was found in items`}</div>
+                <div>
+                  <Highlighter
+                    sentence={person.address}
+                    condition={person.keys?.includes("address")}
+                    highlight={id || input}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )
+    );
+  }
+);
 
 const SearchIcon = () => {
   return (

@@ -10,6 +10,10 @@
   position: relative;
   padding-bottom: 5px;
 }
+.card {
+  padding: 20px;
+  width: max-content;
+}
 input {
   width: 100%;
   border: 0px;
@@ -42,9 +46,9 @@ ul {
   max-height: 250px;
   overflow-y: auto;
   cursor: pointer;
+  list-style: none;
 }
 li {
-  list-style: none;
   padding: 10px;
   border-bottom: 0px solid gray;
   margin: 0;
