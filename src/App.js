@@ -1,5 +1,12 @@
 import axios from "axios";
-import { useState, useEffect, useCallback, memo } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  memo,
+  useRef,
+  forwardRef,
+} from "react";
 import "./App.css";
 
 const url = "https://lonelybumpyflatassembler2.ad99526.repl.co";
@@ -8,6 +15,14 @@ function App() {
   const [input, setInput] = useState("");
   const [people, setPeople] = useState([]);
   const [id, setId] = useState("");
+  const [cursor, setCursor] = useState(0);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.querySelectorAll("li")[cursor].scrollIntoView();
+    }
+  }, [cursor]);
 
   const getUsers = useCallback(async () => {
     try {
@@ -29,6 +44,19 @@ function App() {
       getUsers();
     }
   }, [getUsers, input]);
+
+  const handleKeyDown = useCallback(
+    async (e) => {
+      // arrow up/down button should select next/previous list element
+      if (e.keyCode === 38 && cursor > 0) {
+        setCursor((c) => c - 1);
+      } else if (e.keyCode === 40 && cursor < people.length - 1) {
+        setCursor((c) => c + 1);
+      }
+    },
+    [cursor, people.length]
+  );
+
   return (
     <div className="App">
       <div className="container">
@@ -38,12 +66,20 @@ function App() {
           value={input}
           placeholder="Search users by ID, address, name..."
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <CrossIcon onClick={() => setInput("")} />
         {input.trim() && people.length === 0 && (
           <div className="no-result">No results found </div>
         )}
-        <People people={people} id={id} input={input} />
+        <People
+          people={people}
+          id={id}
+          input={input}
+          ref={ref}
+          cursor={cursor}
+          setCursor={setCursor}
+        />
       </div>
     </div>
   );
@@ -79,13 +115,17 @@ const Highlighter = ({
   return sentence || "";
 };
 
-const People = ({ people, id, input }) => {
+const People = forwardRef(({ people, id, input, cursor, setCursor }, ref) => {
   return (
     people.length !== 0 && (
-      <ul tabIndex="-1">
+      <ul tabIndex="-1" ref={ref}>
         {people.map((person, i) => {
           return (
-            <li key={person.id}>
+            <li
+              key={person.id}
+              className={cursor === i ? "active" : null}
+              onMouseEnter={() => setCursor(i)}
+            >
               <div>
                 <Highlighter
                   sentence={person.id}
@@ -115,7 +155,7 @@ const People = ({ people, id, input }) => {
       </ul>
     )
   );
-};
+});
 
 const SearchIcon = () => {
   return (

@@ -56,6 +56,10 @@ li:last-child {
 .highlight {
   background: skyblue;
 }
+.active {
+  background: #fffedc;
+}
+
 .italic {
   font-style: italic;
 }
