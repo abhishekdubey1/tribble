@@ -1,4 +1,4 @@
-import { axios } from "axios";
+import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 
@@ -7,12 +7,15 @@ const url = "https://LonelyBumpyFlatassembler2.ad99526.repl.co";
 function App() {
   const [input, setInput] = useState("");
   const [people, setPeople] = useState([]);
+
   const getUsers = useCallback(async () => {
     const { data } = await axios(`${url}/search/${input}`);
+    console.log(data);
     if (data.people) {
       setPeople(data.people);
     }
   }, [input]);
+
   useEffect(() => {
     if (input) {
       getUsers();
