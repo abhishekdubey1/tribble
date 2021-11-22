@@ -13,6 +13,13 @@ input::-webkit-search-cancel-button {
   display: none !important;
 }
 
+.no-result {
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #8e9297;
+}
 .highlight {
   background: skyblue;
 }
